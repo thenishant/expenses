@@ -19,6 +19,9 @@ router.get('/:id', (req, res, next) => {
     const expense = DUMMY_EXPENSES.find(expense => {
         return expense.id === expenseId
     });
+
+    if (!expense)
+        return res.status(404).json({message: "Cannot find expense with the associated id"})
     res.json({expense})
 })
 
