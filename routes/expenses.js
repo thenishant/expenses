@@ -1,5 +1,8 @@
 const express = require('express')
 
+const HttpError = require("../models/http-errors");
+
+
 const router = express.Router()
 const date = new Date();
 
@@ -21,7 +24,7 @@ router.get('/:id', (req, res, next) => {
     });
 
     if (!expense)
-        return res.status(404).json({message: "Cannot find expense with the associated id"})
+        throw new HttpError('Cannot find expense with the associated id', 404)
     res.json({expense})
 })
 
