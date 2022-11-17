@@ -1,10 +1,18 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const expenseRouter = require('./routes/expenses')
+const expenseRouter = require('./routes/expenses-route')
+const httpError = require('./models/http-errors')
+
 const app = express();
 
+app.use(bodyParser.json())
+
 app.use('/api/expense', expenseRouter)
+
+app.use((req, res, next) => {
+    throw new httpError('Could not find this route', 404);
+})
 
 app.use((error, req, res, next) => {
     if (res.headerSent) {
