@@ -1,8 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const expenseRouter = require('./routes/expenses')
+const expenseRouter = require('./routes/expenses-route')
 const app = express();
+
+app.use(bodyParser.json())
 
 app.use('/api/expense', expenseRouter)
 

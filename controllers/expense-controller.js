@@ -1,9 +1,5 @@
-const express = require('express')
-
 const HttpError = require("../models/http-errors");
-
-
-const router = express.Router()
+const {v4: uuidv4} = require('uuid');
 const date = new Date();
 
 const DUMMY_EXPENSES = [
@@ -17,7 +13,7 @@ const DUMMY_EXPENSES = [
     }
 ]
 
-router.get('/:id', (req, res, next) => {
+const getExepenseById = (req, res, next) => {
     const expenseId = req.params.id;
     const expense = DUMMY_EXPENSES.find(expense => {
         return expense.id === expenseId
@@ -26,6 +22,17 @@ router.get('/:id', (req, res, next) => {
     if (!expense)
         throw new HttpError('Cannot find expense with the associated id', 404)
     res.json({expense})
-})
+}
 
-module.exports = router
+const createExpense = (request, response, next) => {
+    const {date, day, type, amount, desc} = request.body
+    const createdExpense = {id: uuidv4(), date, day, type, amount, desc}
+
+    DUMMY_EXPENSES.push(createdExpense)
+
+    response.status(201).json({expense: createdExpense})
+
+}
+
+exports.getExepenseById = getExepenseById
+exports.createExpense = createExpense
