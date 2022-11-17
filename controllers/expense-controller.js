@@ -31,8 +31,31 @@ const createExpense = (request, response, next) => {
     DUMMY_EXPENSES.push(createdExpense)
 
     response.status(201).json({expense: createdExpense})
+}
 
+const updateExpense = (req, res, next) => {
+    const {type, amount, desc} = req.body
+
+    const expenseId = req.headers.id;
+
+    // const expenseId = req.setHeader("id", id)
+
+    const updatedExpense = {...DUMMY_EXPENSES.find(e => e.id === expenseId)};
+    const expenseIndex = DUMMY_EXPENSES.findIndex(e => e.id === expenseId);
+
+    updatedExpense.type = type
+    updatedExpense.amount = amount
+    updatedExpense.desc = desc
+
+    DUMMY_EXPENSES[expenseIndex] = updatedExpense
+
+    res.status(200).json({expense: updatedExpense})
+}
+
+const deleteExpense = (req, res, next) => {
 }
 
 exports.getExepenseById = getExepenseById
 exports.createExpense = createExpense
+exports.deleteExpense = deleteExpense
+exports.updateExpense = updateExpense
