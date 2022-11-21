@@ -38,8 +38,6 @@ const updateExpense = (req, res, next) => {
 
     const expenseId = req.headers.id;
 
-    // const expenseId = req.setHeader("id", id)
-
     const updatedExpense = {...DUMMY_EXPENSES.find(e => e.id === expenseId)};
     const expenseIndex = DUMMY_EXPENSES.findIndex(e => e.id === expenseId);
 
