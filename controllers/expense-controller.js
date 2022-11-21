@@ -2,7 +2,7 @@ const HttpError = require("../models/http-errors");
 const {v4: uuidv4} = require('uuid');
 const date = new Date();
 
-const DUMMY_EXPENSES = [
+let DUMMY_EXPENSES = [
     {
         id: 'e1',
         date: date.toLocaleDateString(),
@@ -53,6 +53,10 @@ const updateExpense = (req, res, next) => {
 }
 
 const deleteExpense = (req, res, next) => {
+    const expenseId = req.headers.id;
+    DUMMY_EXPENSES = DUMMY_EXPENSES.filter(e => e.id !== expenseId)
+
+    res.status(200).json({message: "Expense deleted"})
 }
 
 exports.getExepenseById = getExepenseById
