@@ -13,7 +13,7 @@ let DUMMY_EXPENSES = [
     }
 ]
 
-const getExepenseById = (req, res, next) => {
+const getExpenseById = (req, res, next) => {
     const expenseId = req.params.id;
     const expense = DUMMY_EXPENSES.find(expense => {
         return expense.id === expenseId
@@ -59,7 +59,7 @@ const deleteExpense = (req, res, next) => {
     res.status(200).json({message: "Expense deleted"})
 }
 
-exports.getExepenseById = getExepenseById
+exports.getExepenseById = getExpenseById
 exports.createExpense = createExpense
 exports.deleteExpense = deleteExpense
 exports.updateExpense = updateExpense
