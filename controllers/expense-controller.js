@@ -1,8 +1,9 @@
 const HttpError = require("../models/http-errors");
 const {v4: uuidv4} = require('uuid');
+const {validationResult} = require("express-validator");
 const date = new Date();
 
-const DUMMY_EXPENSES = [
+let DUMMY_EXPENSES = [
     {
         id: 'e1',
         date: date.toLocaleDateString(),
@@ -13,7 +14,7 @@ const DUMMY_EXPENSES = [
     }
 ]
 
-const getExepenseById = (req, res, next) => {
+const getExpenseById = (req, res, next) => {
     const expenseId = req.params.id;
     const expense = DUMMY_EXPENSES.find(expense => {
         return expense.id === expenseId
@@ -24,7 +25,15 @@ const getExepenseById = (req, res, next) => {
     res.json({expense})
 }
 
+function validateRequest(request) {
+    const result = validationResult(request);
+    if (!result.isEmpty())
+        throw new HttpError('Error', 422)
+}
+
 const createExpense = (request, response, next) => {
+    validateRequest(request);
+
     const {date, day, type, amount, desc} = request.body
     const createdExpense = {id: uuidv4(), date, day, type, amount, desc}
 
@@ -34,12 +43,11 @@ const createExpense = (request, response, next) => {
 }
 
 const updateExpense = (req, res, next) => {
+    validateRequest(req)
+
     const {type, amount, desc} = req.body
 
     const expenseId = req.headers.id;
-
-    // const expenseId = req.setHeader("id", id)
-
     const updatedExpense = {...DUMMY_EXPENSES.find(e => e.id === expenseId)};
     const expenseIndex = DUMMY_EXPENSES.findIndex(e => e.id === expenseId);
 
@@ -53,9 +61,13 @@ const updateExpense = (req, res, next) => {
 }
 
 const deleteExpense = (req, res, next) => {
+    const expenseId = req.headers.id;
+    DUMMY_EXPENSES = DUMMY_EXPENSES.filter(e => e.id !== expenseId)
+
+    res.status(200).json({message: "Expense deleted"})
 }
 
-exports.getExepenseById = getExepenseById
+exports.getExepenseById = getExpenseById
 exports.createExpense = createExpense
 exports.deleteExpense = deleteExpense
 exports.updateExpense = updateExpense
