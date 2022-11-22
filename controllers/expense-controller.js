@@ -1,5 +1,6 @@
 const HttpError = require("../models/http-errors");
 const {v4: uuidv4} = require('uuid');
+const {validationResult} = require("express-validator");
 const date = new Date();
 
 let DUMMY_EXPENSES = [
@@ -25,6 +26,10 @@ const getExpenseById = (req, res, next) => {
 }
 
 const createExpense = (request, response, next) => {
+    const result = validationResult(request);
+    if (!result.isEmpty())
+        throw new HttpError('Error', 422)
+
     const {date, day, type, amount, desc} = request.body
     const createdExpense = {id: uuidv4(), date, day, type, amount, desc}
 
