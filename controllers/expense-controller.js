@@ -25,10 +25,14 @@ const getExpenseById = (req, res, next) => {
     res.json({expense})
 }
 
-const createExpense = (request, response, next) => {
+function validateRequest(request) {
     const result = validationResult(request);
     if (!result.isEmpty())
         throw new HttpError('Error', 422)
+}
+
+const createExpense = (request, response, next) => {
+    validateRequest(request);
 
     const {date, day, type, amount, desc} = request.body
     const createdExpense = {id: uuidv4(), date, day, type, amount, desc}
@@ -39,10 +43,11 @@ const createExpense = (request, response, next) => {
 }
 
 const updateExpense = (req, res, next) => {
+    validateRequest(req)
+
     const {type, amount, desc} = req.body
 
     const expenseId = req.headers.id;
-
     const updatedExpense = {...DUMMY_EXPENSES.find(e => e.id === expenseId)};
     const expenseIndex = DUMMY_EXPENSES.findIndex(e => e.id === expenseId);
 

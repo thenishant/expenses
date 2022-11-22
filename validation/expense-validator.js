@@ -6,5 +6,8 @@ const checkTypeNotEmpty = check('type').notEmpty();
 const checkValidAmount = check('amount').isNumeric().notEmpty();
 
 const checkPostExpenseBody = [checkValidDate, checkDayNotEmpty, checkTypeNotEmpty, checkValidAmount]
+const checkPatchExpenseBody = checkPostExpenseBody
+
 
 exports.checkPostExpenseBody = checkPostExpenseBody
+exports.checkPatchExpenseBody = checkPatchExpenseBody
