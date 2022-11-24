@@ -3,6 +3,8 @@ const {v4: uuidv4} = require('uuid');
 const {validationResult} = require("express-validator");
 const date = new Date();
 
+const Expense = require('../models/expense')
+
 let DUMMY_EXPENSES = [
     {
         id: 'e1',
@@ -31,12 +33,19 @@ function validateRequest(request) {
         throw new HttpError('Error', 422)
 }
 
-const createExpense = (request, response, next) => {
+const createExpense = async (request, response, next) => {
     validateRequest(request);
 
     const {date, day, type, amount, desc} = request.body
-    const createdExpense = {id: uuidv4(), date, day, type, amount, desc}
+    const createdExpense = new Expense({date, day, type, amount, desc})
 
+    try {
+        await createdExpense.save()
+    } catch (err) {
+        console.log(err)
+        const error = new HttpError('Creating expense failed, please try again', 500)
+        return next(error)
+    }
     DUMMY_EXPENSES.push(createdExpense)
 
     response.status(201).json({expense: createdExpense})

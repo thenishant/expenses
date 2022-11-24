@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const expenseSchema = new schema({
-    date: {type: Date, required: true},
+    date: {type: String, required: true},
     day: {type: String, required: true},
     type: {type: String, required: true},
     amount: {type: Number, required: true},
