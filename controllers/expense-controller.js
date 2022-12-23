@@ -1,24 +1,25 @@
 const HttpError = require("../models/http-errors");
 const {v4: uuidv4} = require('uuid');
 const {validationResult} = require("express-validator");
-const date = new Date();
 
 const Expense = require('../models/expense')
 
-const getExpenseById = async (req, res, next) => {
-    const expenseId = req.params.id;
-    let expense
+let expenseId
+let expense
+
+async function findExpenseById(next) {
     try {
         expense = await Expense.findById(expenseId)
     } catch (err) {
         const error = new HttpError("Something went wrong", 500)
         return next(error)
     }
+}
 
-    if (!expense) {
-        const error = new HttpError('Cannot find expense with the associated id', 404)
-        return next(error)
-    }
+const getExpenseById = async (req, res, next) => {
+    expenseId = req.params.id;
+
+    await findExpenseById(next)
 
     res.json({expense: expense.toObject({getters: true})})
 }
@@ -43,7 +44,7 @@ const createExpense = async (request, response, next) => {
         return next(error)
     }
 
-    response.status(201).json({expense: createdExpense})
+    response.status(201).json({expense: createdExpense.toObject({getters: true})})
 }
 
 const updateExpense = async (req, res, next) => {
@@ -51,15 +52,9 @@ const updateExpense = async (req, res, next) => {
 
     const {type, amount, desc} = req.body
 
-    const expenseId = req.headers.id;
+    expenseId = req.headers.id;
 
-    let expense
-    try {
-        expense = await Expense.findById(expenseId)
-    } catch (err) {
-        const error = new HttpError("Something went wrong", 500)
-        return next(error)
-    }
+    await findExpenseById(next)
 
     expense.type = type
     expense.amount = amount
@@ -77,14 +72,9 @@ const updateExpense = async (req, res, next) => {
 }
 
 const deleteExpense = async (req, res, next) => {
-    const expenseId = req.headers.id;
-    let expense
-    try {
-        expense = await Expense.findById(expenseId)
-    } catch (err) {
-        const error = new HttpError("Something went wrong", 500)
-        return next(error)
-    }
+    expenseId = req.headers.id;
+
+    await findExpenseById(next)
 
     try {
         await expense.remove()
@@ -93,7 +83,6 @@ const deleteExpense = async (req, res, next) => {
         const error = new HttpError('Delete failed', 500)
         return next(error)
     }
-
 
     res.status(200).json({expense: expense.toObject({getters: true})})
 }
