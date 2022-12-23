@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const expenseRouter = require('./routes/expenses-route')
 const httpError = require('./models/http-errors')
@@ -22,5 +23,12 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
+mongoose
+    .connect(process.env.URI)
+    .then(() => {
+        app.listen(process.env.PORT)
+    })
+    .catch(err => {
+        console.log(err)
+    })
 
-app.listen(process.env.PORT)
